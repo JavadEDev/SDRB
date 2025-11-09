@@ -1,0 +1,56 @@
+{
+  "site": {
+    "title": "Severinsen Design & Redesign Bedrift",
+    "description": "Design og redesign tjenester"
+  },
+  "nav": {
+    "home": "Hjem",
+    "about": "Om oss",
+    "services": "Tjenester",
+    "courses": "Kurs",
+    "calendar": "Kalender",
+    "gallery": "Galleri",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "title": "Velkommen til Severinsen Design & Redesign Bedrift",
+    "owner": "Jorunn",
+    "address": "Krossmyrveien 25",
+    "services": {
+      "title": "Våre tjenester",
+      "sewing": "Søm",
+      "redesign": "Redesign",
+      "courses": "Kurs",
+      "themeEvenings": "Temakvelder"
+    }
+  },
+  "contact": {
+    "title": "Kontakt oss",
+    "address": "Krossmyrveien 25",
+    "phone": "+47 123 45 678",
+    "email": "kontakt@severinsen-design.no"
+  },
+  "coursesPage": {
+    "title": "Kurs",
+    "description": "Se våre tilgjengelige kurs",
+    "sections": [
+      {
+        "title": "Sømkurs",
+        "description": "Lær grunnleggende og avanserte sømteknikker"
+      },
+      {
+        "title": "Makramé",
+        "description": "Lær å lage vakre makramé-prosjekter"
+      },
+      {
+        "title": "Keramikk",
+        "description": "Utforsk keramikkens verden"
+      },
+      {
+        "title": "Bunad-skjorte",
+        "description": "Lær å sy tradisjonell bunad-skjorte"
+      }
+    ]
+  }
+}
+

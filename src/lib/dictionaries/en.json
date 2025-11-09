@@ -1,0 +1,56 @@
+{
+  "site": {
+    "title": "Severinsen Design & Redesign Bedrift",
+    "description": "Design and redesign services"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "courses": "Courses",
+    "calendar": "Calendar",
+    "gallery": "Gallery",
+    "contact": "Contact"
+  },
+  "home": {
+    "title": "Welcome to Severinsen Design & Redesign Bedrift",
+    "owner": "Jorunn",
+    "address": "Krossmyrveien 25",
+    "services": {
+      "title": "Our Services",
+      "sewing": "Sewing",
+      "redesign": "Redesign",
+      "courses": "Courses",
+      "themeEvenings": "Theme Evenings"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "address": "Krossmyrveien 25",
+    "phone": "+47 123 45 678",
+    "email": "contact@severinsen-design.no"
+  },
+  "coursesPage": {
+    "title": "Courses",
+    "description": "View our available courses",
+    "sections": [
+      {
+        "title": "Sewing Courses",
+        "description": "Learn basic and advanced sewing techniques"
+      },
+      {
+        "title": "Macramé",
+        "description": "Learn to create beautiful macramé projects"
+      },
+      {
+        "title": "Ceramics",
+        "description": "Explore the world of ceramics"
+      },
+      {
+        "title": "Bunad Shirt",
+        "description": "Learn to sew traditional bunad shirt"
+      }
+    ]
+  }
+}
+
