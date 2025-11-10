@@ -1,11 +1,11 @@
- "use client";
- 
-import { useState } from "react";
+"use client";
+
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
-export default function SignInPage() {
+function SignInForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [email, setEmail] = useState("");
@@ -18,14 +18,14 @@ export default function SignInPage() {
     setError(null);
     setLoading(true);
     try {
-      const res = await signIn("credentials", {
+      const res = (await signIn("credentials", {
         email,
         password,
         redirect: true,
         callbackUrl,
-      });
-      if (res && (res as any).error) {
-        setError((res as any).error || "Sign in failed");
+      })) as unknown as { error?: string } | undefined;
+      if (res?.error) {
+        setError(res.error || "Sign in failed");
       }
     } catch (err: any) {
       setError(err.message || "Sign in failed");
@@ -80,6 +80,14 @@ export default function SignInPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="max-w-md mx-auto px-4 py-12">Loading…</div>}>
+      <SignInForm />
+    </Suspense>
   );
 }
 

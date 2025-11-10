@@ -40,7 +40,7 @@ export function DeleteCourseButton({ courseId }: DeleteCourseButtonProps) {
   };
 
   return (
-    <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
+    <Button variant="danger" onClick={handleDelete} disabled={isLoading}>
       {isLoading ? "Deleting..." : "Delete"}
     </Button>
   );

@@ -4,10 +4,10 @@ import { getAllRegistrations } from "@/lib/queries";
 import { DeleteRegistrationButton } from "@/components/admin/delete-registration-button";
 
 export default async function AdminRegistrationsPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/signin");
   }
 
   if ((session.user as any)?.role !== "admin") {

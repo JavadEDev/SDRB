@@ -25,10 +25,11 @@ const authOptions: NextAuthConfig = {
         }
 
         try {
+          const email = String(credentials.email);
           const user = await db
             .select()
             .from(users)
-            .where(eq(users.email, credentials.email))
+            .where(eq(users.email, email))
             .limit(1);
 
           if (user.length === 0) {
@@ -41,7 +42,7 @@ const authOptions: NextAuthConfig = {
             if (!storedHash) {
               return null;
             }
-            const ok = await bcrypt.compare(credentials.password, storedHash);
+            const ok = await bcrypt.compare(String(credentials.password), storedHash);
             if (!ok) {
               return null;
             }
