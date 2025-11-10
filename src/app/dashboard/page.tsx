@@ -2,9 +2,10 @@ import { getServerSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SignOutButton } from "@/components/signout-button";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/api/auth/signin");
@@ -24,6 +25,7 @@ export default async function DashboardPage() {
               <Button variant="secondary">Admin Panel</Button>
             </Link>
           )}
+          <SignOutButton />
         </div>
       </div>
     </div>

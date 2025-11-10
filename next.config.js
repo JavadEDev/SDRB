@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [],
-    remotePatterns: [],
+    domains: ["thumbs.dreamstime.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "thumbs.dreamstime.com",
+      },
+    ],
   },
 }
 

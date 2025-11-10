@@ -5,7 +5,18 @@ import { Button } from "@/components/ui/button";
 import { notify } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 
-export function GalleryForm() {
+interface EditGalleryFormProps {
+  item: {
+    id: string;
+    title: { no?: string; en?: string };
+    description?: { no?: string; en?: string } | null;
+    imageUrl: string;
+    price?: string | null;
+    category?: string | null;
+  };
+}
+
+export function EditGalleryForm({ item }: EditGalleryFormProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -68,13 +79,13 @@ export function GalleryForm() {
               en: formData.get("description_en") as string,
             }
           : undefined,
-      price: (formData.get("price") as string) || undefined,
-      category: (formData.get("category") as string) || undefined,
+      price: formData.get("price") ? String(formData.get("price")) : null,
+      category: formData.get("category") ? (formData.get("category") as string) : null,
     };
 
     try {
-      const response = await fetch("/api/gallery", {
-        method: "POST",
+      const response = await fetch(`/api/gallery/${item.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -82,16 +93,15 @@ export function GalleryForm() {
       if (response.ok) {
         router.refresh();
         setIsOpen(false);
-        (e.target as HTMLFormElement).reset();
-        setUploadedUrl(null);
         setUploadError(null);
-        notify.success("Gallery item created");
+        setUploadedUrl(null);
+        notify.success("Gallery item updated");
       } else {
-        notify.error("Failed to create gallery item");
+        notify.error("Failed to update gallery item");
       }
     } catch (error) {
-      console.error("Error creating gallery item:", error);
-      notify.error("Failed to create gallery item");
+      console.error("Error updating gallery item:", error);
+      notify.error("Failed to update gallery item");
     } finally {
       setIsLoading(false);
     }
@@ -99,8 +109,8 @@ export function GalleryForm() {
 
   if (!isOpen) {
     return (
-      <Button variant="primary" onClick={() => setIsOpen(true)}>
-        Add Gallery Item
+      <Button variant="secondary" onClick={() => setIsOpen(true)}>
+        Edit
       </Button>
     );
   }
@@ -108,7 +118,7 @@ export function GalleryForm() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-        <h2 className="text-2xl font-bold mb-4">Add Gallery Item</h2>
+        <h2 className="text-2xl font-bold mb-4">Edit Gallery Item</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Title (Norwegian)</label>
@@ -116,6 +126,7 @@ export function GalleryForm() {
               type="text"
               name="title_no"
               required
+              defaultValue={item.title?.no || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -125,6 +136,7 @@ export function GalleryForm() {
               type="text"
               name="title_en"
               required
+              defaultValue={item.title?.en || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -134,12 +146,13 @@ export function GalleryForm() {
               type="text"
               name="image_url"
               required
+              defaultValue={item.imageUrl}
               ref={imageUrlInputRef}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Upload Image</label>
+            <label className="block text-sm font-medium mb-1">Upload New Image</label>
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp,image/gif"
@@ -162,6 +175,7 @@ export function GalleryForm() {
             <textarea
               name="description_no"
               rows={3}
+              defaultValue={item.description?.no || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -170,6 +184,7 @@ export function GalleryForm() {
             <textarea
               name="description_en"
               rows={3}
+              defaultValue={item.description?.en || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -179,6 +194,7 @@ export function GalleryForm() {
               type="number"
               name="price"
               step="0.01"
+              defaultValue={item.price ? String(item.price) : ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -187,12 +203,13 @@ export function GalleryForm() {
             <input
               type="text"
               name="category"
+              defaultValue={item.category || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
           <div className="flex gap-4">
             <Button type="submit" variant="primary" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Item"}
+              {isLoading ? "Saving..." : "Save changes"}
             </Button>
             <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
               Cancel
@@ -203,4 +220,5 @@ export function GalleryForm() {
     </div>
   );
 }
+
 

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 
 export function CourseForm() {
@@ -27,7 +28,7 @@ export function CourseForm() {
       price: formData.get("price") as string,
       location: formData.get("location") as string,
       category: formData.get("category") as string,
-      active: formData.get("active") === "true",
+      active: true,
     };
 
     try {
@@ -38,15 +39,16 @@ export function CourseForm() {
       });
 
       if (response.ok) {
+        notify.success("Course created");
         router.refresh();
         setIsOpen(false);
         (e.target as HTMLFormElement).reset();
       } else {
-        alert("Failed to create course");
+        notify.error("Failed to create course");
       }
     } catch (error) {
       console.error("Error creating course:", error);
-      alert("Failed to create course");
+      notify.error("Failed to create course");
     } finally {
       setIsLoading(false);
     }

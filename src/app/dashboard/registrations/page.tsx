@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { CancelRegistrationButton } from "@/components/cancel-registration-button";
 
 export default async function RegistrationsPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session || !session.user) {
-    redirect("/api/auth/signin");
+    redirect("/signin");
   }
 
   const registrations = await getUserRegistrations((session.user as any).id);

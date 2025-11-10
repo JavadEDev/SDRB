@@ -2,53 +2,25 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { notify } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 
-export function GalleryForm() {
+interface EditCourseFormProps {
+  course: {
+    id: string;
+    title: { no?: string; en?: string };
+    description: { no?: string; en?: string };
+    slug: string;
+    price?: string | null;
+    location: string;
+    category?: string | null;
+    active?: boolean | null;
+  };
+}
+
+export function EditCourseForm({ course }: EditCourseFormProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isUploading, setIsUploading] = React.useState(false);
-  const [uploadError, setUploadError] = React.useState<string | null>(null);
-  const [uploadedUrl, setUploadedUrl] = React.useState<string | null>(null);
-  const imageUrlInputRef = React.useRef<HTMLInputElement>(null);
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    setUploadError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/uploads", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to upload image");
-      }
-
-      const data = await response.json();
-      setUploadedUrl(data.file.url);
-      if (imageUrlInputRef.current) {
-        imageUrlInputRef.current.value = data.file.url;
-      }
-      notify.success("Image uploaded");
-    } catch (error: any) {
-      console.error("Upload error:", error);
-      setUploadError(error?.message || "Failed to upload image");
-      notify.error(error?.message || "Failed to upload image");
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,21 +32,20 @@ export function GalleryForm() {
         no: formData.get("title_no") as string,
         en: formData.get("title_en") as string,
       },
-      imageUrl: formData.get("image_url") as string,
-      description:
-        formData.get("description_no") || formData.get("description_en")
-          ? {
-              no: formData.get("description_no") as string,
-              en: formData.get("description_en") as string,
-            }
-          : undefined,
-      price: (formData.get("price") as string) || undefined,
-      category: (formData.get("category") as string) || undefined,
+      slug: formData.get("slug") as string,
+      description: {
+        no: formData.get("description_no") as string,
+        en: formData.get("description_en") as string,
+      },
+      price: formData.get("price") ? String(formData.get("price")) : null,
+      location: formData.get("location") as string,
+      category: formData.get("category") ? (formData.get("category") as string) : null,
+      active: formData.get("active") === "on",
     };
 
     try {
-      const response = await fetch("/api/gallery", {
-        method: "POST",
+      const response = await fetch(`/api/courses/${course.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -82,16 +53,12 @@ export function GalleryForm() {
       if (response.ok) {
         router.refresh();
         setIsOpen(false);
-        (e.target as HTMLFormElement).reset();
-        setUploadedUrl(null);
-        setUploadError(null);
-        notify.success("Gallery item created");
       } else {
-        notify.error("Failed to create gallery item");
+        alert("Failed to update course");
       }
     } catch (error) {
-      console.error("Error creating gallery item:", error);
-      notify.error("Failed to create gallery item");
+      console.error("Error updating course:", error);
+      alert("Failed to update course");
     } finally {
       setIsLoading(false);
     }
@@ -99,8 +66,8 @@ export function GalleryForm() {
 
   if (!isOpen) {
     return (
-      <Button variant="primary" onClick={() => setIsOpen(true)}>
-        Add Gallery Item
+      <Button variant="secondary" onClick={() => setIsOpen(true)}>
+        Edit
       </Button>
     );
   }
@@ -108,7 +75,7 @@ export function GalleryForm() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-        <h2 className="text-2xl font-bold mb-4">Add Gallery Item</h2>
+        <h2 className="text-2xl font-bold mb-4">Edit Course</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Title (Norwegian)</label>
@@ -116,6 +83,7 @@ export function GalleryForm() {
               type="text"
               name="title_no"
               required
+              defaultValue={course.title?.no || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -125,43 +93,27 @@ export function GalleryForm() {
               type="text"
               name="title_en"
               required
+              defaultValue={course.title?.en || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Image URL</label>
+            <label className="block text-sm font-medium mb-1">Slug</label>
             <input
               type="text"
-              name="image_url"
+              name="slug"
               required
-              ref={imageUrlInputRef}
+              defaultValue={course.slug}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Upload Image</label>
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              onChange={handleFileUpload}
-              className="w-full text-sm"
-            />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Supports JPG, PNG, WEBP, GIF up to 5MB. Uploaded files are stored in the project under `/public/uploads`.
-            </p>
-            {isUploading && <p className="text-xs text-blue-600 mt-1">Uploading...</p>}
-            {uploadedUrl && (
-              <p className="text-xs text-green-600 mt-1">
-                Uploaded! Image URL set to <span className="font-mono">{uploadedUrl}</span>
-              </p>
-            )}
-            {uploadError && <p className="text-xs text-red-600 mt-1">{uploadError}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Description (Norwegian)</label>
             <textarea
               name="description_no"
+              required
               rows={3}
+              defaultValue={course.description?.no || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -169,7 +121,9 @@ export function GalleryForm() {
             <label className="block text-sm font-medium mb-1">Description (English)</label>
             <textarea
               name="description_en"
+              required
               rows={3}
+              defaultValue={course.description?.en || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
@@ -179,20 +133,49 @@ export function GalleryForm() {
               type="number"
               name="price"
               step="0.01"
+              defaultValue={course.price ? String(course.price) : ""}
+              className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Location</label>
+            <input
+              type="text"
+              name="location"
+              required
+              defaultValue={course.location}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
-            <input
-              type="text"
+            <select
               name="category"
+              defaultValue={course.category || ""}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+            >
+              <option value="">Select category</option>
+              <option value="sewing">Sewing</option>
+              <option value="macramé">Macramé</option>
+              <option value="ceramics">Ceramics</option>
+              <option value="bunad-shirt">Bunad Shirt</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="active"
+              id={`course-active-${course.id}`}
+              defaultChecked={Boolean(course.active)}
+              className="h-4 w-4"
             />
+            <label htmlFor={`course-active-${course.id}`} className="text-sm">
+              Active
+            </label>
           </div>
           <div className="flex gap-4">
             <Button type="submit" variant="primary" disabled={isLoading}>
-              {isLoading ? "Creating..." : "Create Item"}
+              {isLoading ? "Saving..." : "Save changes"}
             </Button>
             <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
               Cancel
@@ -203,4 +186,5 @@ export function GalleryForm() {
     </div>
   );
 }
+
 

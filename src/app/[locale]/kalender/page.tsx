@@ -1,5 +1,8 @@
 import { getDictionary } from "@/lib/dictionaries";
-import { getCoursesWithSessions, getSessionRegistrations } from "@/lib/queries";
+import {
+  getCoursesWithSessions,
+  getUserRegistrations,
+} from "@/lib/queries";
 import type { Metadata } from "next";
 import { RegisterButton } from "@/components/register-button";
 import { getServerSession } from "@/lib/auth";
@@ -25,21 +28,19 @@ export default async function CalendarPage({
 }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   const coursesWithSessions = await getCoursesWithSessions();
-  
-  // Get user registrations if logged in
-  let userRegistrations: string[] = [];
-  if (session?.user) {
-    const registrations = await Promise.all(
-      coursesWithSessions.flatMap((course) =>
-        course.sessions.map((s) => getSessionRegistrations(s.id))
-      )
+
+  const userRegistrationMap: Record<string, string> = {};
+  if (session?.user?.id) {
+    const registrations = await getUserRegistrations(
+      (session.user as any).id
     );
-    userRegistrations = registrations
-      .flat()
-      .filter((r) => r.userId === (session.user as any).id)
-      .map((r) => r.sessionId);
+    registrations.forEach((entry) => {
+      if (entry.session?.id) {
+        userRegistrationMap[entry.session.id] = entry.registration.id;
+      }
+    });
   }
 
   const allSessions = coursesWithSessions.flatMap((course) =>
@@ -81,7 +82,9 @@ export default async function CalendarPage({
               <RegisterButton
                 sessionId={session.id}
                 availableSeats={session.availableSeats}
-                isRegistered={userRegistrations.includes(session.id)}
+                isRegistered={Boolean(userRegistrationMap[session.id])}
+                registrationId={userRegistrationMap[session.id]}
+                locale={locale}
               />
             </div>
             );

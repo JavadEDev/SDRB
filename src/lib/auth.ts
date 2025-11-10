@@ -1,15 +1,17 @@
 import NextAuth, { type NextAuthConfig } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "./db";
 import { users } from "@/drizzle/schema";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 const authOptions: NextAuthConfig = {
-  adapter: DrizzleAdapter(db),
+  // Note: When using JWT strategy, adapter is optional
+  // We'll manage users directly in the authorize function
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -18,28 +20,43 @@ const authOptions: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email) {
+        if (!credentials?.email || !db) {
           return null;
         }
 
-        const user = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, credentials.email))
-          .limit(1);
+        try {
+          const user = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, credentials.email))
+            .limit(1);
 
-        if (user.length === 0) {
+          if (user.length === 0) {
+            return null;
+          }
+
+          // Verify password if provided and user has a stored hash
+          const storedHash = (user[0] as any).passwordHash as string | null | undefined;
+          if (credentials.password) {
+            if (!storedHash) {
+              return null;
+            }
+            const ok = await bcrypt.compare(credentials.password, storedHash);
+            if (!ok) {
+              return null;
+            }
+          }
+
+          return {
+            id: user[0].id,
+            email: user[0].email,
+            name: user[0].name,
+            role: user[0].role,
+          };
+        } catch (error) {
+          console.error("Auth error:", error);
           return null;
         }
-
-        // TODO: Add proper password verification
-        // For now, return user if email exists
-        return {
-          id: user[0].id,
-          email: user[0].email,
-          name: user[0].name,
-          role: user[0].role,
-        };
       },
     }),
   ],
@@ -59,7 +76,7 @@ const authOptions: NextAuthConfig = {
     },
   },
   pages: {
-    signIn: "/api/auth/signin",
+    signIn: "/signin",
   },
 };
 

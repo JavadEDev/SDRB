@@ -22,14 +22,14 @@ export async function POST(
     }
 
     const body = await request.json();
-    const session = await createCourseSession({
+    const newSession = await createCourseSession({
       courseId: id,
       startAt: new Date(body.start_at),
       endAt: new Date(body.end_at),
       seats: body.seats,
     });
 
-    return NextResponse.json(session[0], { status: 201 });
+    return NextResponse.json(newSession[0], { status: 201 });
   } catch (error) {
     console.error("Error creating session:", error);
     return NextResponse.json(

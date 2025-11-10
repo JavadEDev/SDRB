@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 
 interface SessionFormProps {
@@ -32,15 +33,16 @@ export function SessionForm({ courseId }: SessionFormProps) {
       });
 
       if (response.ok) {
+        notify.success("Session created");
         router.refresh();
         setIsOpen(false);
         (e.target as HTMLFormElement).reset();
       } else {
-        alert("Failed to create session");
+        notify.error("Failed to create session");
       }
     } catch (error) {
       console.error("Error creating session:", error);
-      alert("Failed to create session");
+      notify.error("Failed to create session");
     } finally {
       setIsLoading(false);
     }

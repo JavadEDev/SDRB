@@ -4,10 +4,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/signin");
   }
 
   if ((session.user as any)?.role !== "admin") {
@@ -37,4 +37,3 @@ export default async function AdminPage() {
     </div>
   );
 }
-

@@ -18,6 +18,9 @@ export async function DELETE(
     }
 
     // Get registration to check ownership
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 503 });
+    }
     const registration = await db
       .select()
       .from(registrations)

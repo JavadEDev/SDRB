@@ -18,6 +18,9 @@ export async function POST(
     }
 
     // Get course session details
+    if (!db) {
+      return NextResponse.json({ error: "Database not available" }, { status: 503 });
+    }
     const courseSession = await db
       .select()
       .from(courseSessions)

@@ -3,8 +3,13 @@ import { courses, courseSessions, registrations, galleryItems, users } from "@/d
 import { eq, and, gte, desc, sql, inArray } from "drizzle-orm";
 
 // Course queries
-export async function getCoursesWithSessions() {
-  const allCourses = await db.select().from(courses).where(eq(courses.active, true));
+export async function getCoursesWithSessions(includeInactive: boolean = false) {
+  if (!db) {
+    return [];
+  }
+  const allCourses = includeInactive
+    ? await db.select().from(courses)
+    : await db.select().from(courses).where(eq(courses.active, true));
   
   const allSessions = await db
     .select()
@@ -54,14 +59,17 @@ export async function createCourse(data: {
   category?: string;
   active?: boolean;
 }) {
+  if (!db) throw new Error("Database not initialized");
   return await db.insert(courses).values(data).returning();
 }
 
 export async function updateCourse(id: string, data: Partial<typeof courses.$inferInsert>) {
+  if (!db) throw new Error("Database not initialized");
   return await db.update(courses).set(data).where(eq(courses.id, id)).returning();
 }
 
 export async function deleteCourse(id: string) {
+  if (!db) throw new Error("Database not initialized");
   return await db.delete(courses).where(eq(courses.id, id));
 }
 
@@ -72,14 +80,17 @@ export async function createCourseSession(data: {
   endAt: Date;
   seats: number;
 }) {
+  if (!db) throw new Error("Database not initialized");
   return await db.insert(courseSessions).values(data).returning();
 }
 
 export async function updateCourseSession(id: string, data: Partial<typeof courseSessions.$inferInsert>) {
+  if (!db) throw new Error("Database not initialized");
   return await db.update(courseSessions).set(data).where(eq(courseSessions.id, id)).returning();
 }
 
 export async function deleteCourseSession(id: string) {
+  if (!db) throw new Error("Database not initialized");
   return await db.delete(courseSessions).where(eq(courseSessions.id, id));
 }
 
@@ -88,10 +99,12 @@ export async function createRegistration(data: {
   userId: string;
   sessionId: string;
 }) {
+  if (!db) throw new Error("Database not initialized");
   return await db.insert(registrations).values(data).returning();
 }
 
 export async function getUserRegistrations(userId: string) {
+  if (!db) return [];
   return await db
     .select({
       registration: registrations,
@@ -106,10 +119,12 @@ export async function getUserRegistrations(userId: string) {
 }
 
 export async function deleteRegistration(id: string) {
+  if (!db) throw new Error("Database not initialized");
   return await db.delete(registrations).where(eq(registrations.id, id));
 }
 
 export async function getAllRegistrations() {
+  if (!db) return [];
   return await db
     .select({
       registration: registrations,
@@ -125,6 +140,7 @@ export async function getAllRegistrations() {
 }
 
 export async function getSessionRegistrations(sessionId: string) {
+  if (!db) return [];
   return await db
     .select()
     .from(registrations)
@@ -133,6 +149,7 @@ export async function getSessionRegistrations(sessionId: string) {
 
 // Gallery queries
 export async function getGalleryItems(category?: string) {
+  if (!db) return [];
   const query = db.select().from(galleryItems).orderBy(desc(galleryItems.createdAt));
   
   if (category) {
@@ -149,14 +166,17 @@ export async function createGalleryItem(data: {
   price?: string;
   category?: string;
 }) {
+  if (!db) throw new Error("Database not initialized");
   return await db.insert(galleryItems).values(data).returning();
 }
 
 export async function updateGalleryItem(id: string, data: Partial<typeof galleryItems.$inferInsert>) {
+  if (!db) throw new Error("Database not initialized");
   return await db.update(galleryItems).set(data).where(eq(galleryItems.id, id)).returning();
 }
 
 export async function deleteGalleryItem(id: string) {
+  if (!db) throw new Error("Database not initialized");
   return await db.delete(galleryItems).where(eq(galleryItems.id, id));
 }
 
