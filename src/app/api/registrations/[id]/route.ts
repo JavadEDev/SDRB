@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth";
 import { deleteRegistration } from "@/lib/queries";
 import { db } from "@/lib/db";
-import { registrations } from "@/drizzle/schema";
+import { registrations } from "../../../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export async function DELETE(

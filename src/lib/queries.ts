@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { courses, courseSessions, registrations, galleryItems, users } from "@/drizzle/schema";
+import { courses, courseSessions, registrations, galleryItems, users } from "../drizzle/schema";
 import { eq, and, gte, desc, sql, inArray } from "drizzle-orm";
 
 // Course queries
