@@ -4,13 +4,40 @@ import { randomUUID } from "crypto";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const PUBLIC_DIR = path.join(process.cwd(), "public");
+const DEFAULT_SUBDIR_SEGMENTS = ["uploads"];
+const LEGACY_UPLOAD_DIR = path.join(PUBLIC_DIR, ...DEFAULT_SUBDIR_SEGMENTS);
 
-export async function ensureUploadDir() {
-  await fs.mkdir(UPLOAD_DIR, { recursive: true });
+type SaveImageOptions = {
+  userId?: string | null;
+};
+
+function sanitizePathSegment(segment: string) {
+  return segment.replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
-export async function saveImageFile(file: File) {
+async function resolveUploadTarget(options?: SaveImageOptions) {
+  const segments = [...DEFAULT_SUBDIR_SEGMENTS];
+
+  if (options?.userId) {
+    const safeUserId = sanitizePathSegment(options.userId);
+    if (safeUserId) {
+      segments.splice(0, segments.length, "users", safeUserId);
+    }
+  }
+
+  const directoryPath = path.join(PUBLIC_DIR, ...segments);
+  await fs.mkdir(directoryPath, { recursive: true });
+
+  const publicPath = `/${segments.join("/")}`;
+  return { directoryPath, publicPath };
+}
+
+export async function ensureUploadDir() {
+  await resolveUploadTarget();
+}
+
+export async function saveImageFile(file: File, options?: SaveImageOptions) {
   if (!(file instanceof File)) {
     throw new Error("Invalid file payload");
   }
@@ -27,21 +54,27 @@ export async function saveImageFile(file: File) {
     throw new Error("Unsupported file type");
   }
 
-  await ensureUploadDir();
+  const { directoryPath, publicPath } = await resolveUploadTarget(options);
 
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
   const extension = mimeTypeToExtension(file.type);
   const filename = `${randomUUID()}${extension}`;
-  const filepath = path.join(UPLOAD_DIR, filename);
+  const filepath = path.join(directoryPath, filename);
 
   await fs.writeFile(filepath, buffer);
 
-  const publicPath = `/uploads/${filename}`;
+  // Maintain legacy copy in /uploads so existing URLs keep working
+  await fs.mkdir(LEGACY_UPLOAD_DIR, { recursive: true });
+  const legacyPath = path.join(LEGACY_UPLOAD_DIR, filename);
+  await fs.writeFile(legacyPath, buffer);
+
   return {
     filename,
-    url: publicPath,
+    url: `${publicPath}/${filename}`,
+    directory: publicPath,
+    legacyUrl: `/uploads/${filename}`,
     size: file.size,
     type: file.type,
   };
@@ -61,5 +94,3 @@ function mimeTypeToExtension(mimeType: string): string {
       return "";
   }
 }
-
-

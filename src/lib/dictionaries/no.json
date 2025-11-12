@@ -14,14 +14,82 @@
   },
   "home": {
     "title": "Velkommen til Severinsen Design & Redesign Bedrift",
+    "tagline": "Skreddersøm, redesign og kurs for skapende mennesker.",
     "owner": "Jorunn",
     "address": "Krossmyrveien 25",
+    "ctaCourses": "Utforsk kurs",
+    "ctaContact": "Bestill konsultasjon",
+    "heroStats": [
+      { "value": "20+", "label": "År med håndverkserfaring" },
+      { "value": "500+", "label": "Skreddersydde prosjekter fullført" },
+      { "value": "1500+", "label": "Kursdeltakere inspirert" }
+    ],
+    "story": {
+      "heading": "Håndverk med hjerte og presisjon",
+      "paragraphs": [
+        "I over to tiår har Severinsen Design & Redesign hjulpet mennesker med å forelske seg i garderoben på nytt. Med tradisjonelle teknikker, bærekraftige materialer og et skarpt øye for detaljer skaper vi plagg og interiør som føles helt egne.",
+        "Hvert prosjekt starter med lytting—til historiene du bærer, til stoffene du elsker, og til hvordan du vil føle deg når du tar på det ferdige plagget. Derfra utvikler vi en skreddersydd plan og inviterer deg inn i prosessen."
+      ]
+    },
+    "galleryPreview": {
+      "title": "Utvalgte prosjekter",
+      "description": "Et glimt av redesign, søm og kunsthåndverk levert fra vårt atelier i Stavanger.",
+      "cta": "Utforsk galleriet"
+    },
     "services": {
       "title": "Våre tjenester",
+      "description": "Vi kombinerer tradisjonelt håndverk med moderne uttrykk for å skape plagg og opplevelser som varer.",
+      "items": [
+        {
+          "title": "Søm",
+          "description": "Skreddersydde plagg, tilpasninger og spesialbestillinger til enhver anledning."
+        },
+        {
+          "title": "Redesign",
+          "description": "Gi nytt liv til favorittene dine med kreative redesign-prosesser og bærekraftige materialvalg."
+        },
+        {
+          "title": "Kurs",
+          "description": "Praktiske kurs i søm, makramé, keramikk og bunadssøm for alle nivåer."
+        },
+        {
+          "title": "Temakvelder",
+          "description": "Intime kvelder med fokus på teknikker, materialer og skreddersydde prosjekter."
+        }
+      ],
       "sewing": "Søm",
       "redesign": "Redesign",
       "courses": "Kurs",
       "themeEvenings": "Temakvelder"
+    },
+    "process": {
+      "title": "Slik jobber vi",
+      "subtitle": "Fra idé til ferdig resultat",
+      "steps": [
+        {
+          "title": "Utforsk og planlegg",
+          "description": "Vi starter med en samtale om behov, inspirasjon og funksjon før vi skisser de beste løsningene."
+        },
+        {
+          "title": "Utvikle og forme",
+          "description": "Materialer velges, mønstre tegnes og detaljene kommer på plass i tett dialog med deg."
+        },
+        {
+          "title": "Finpuss og lever",
+          "description": "Når alt sitter, leverer vi et ferdig resultat med tydelige instrukser for stell og videre bruk."
+        }
+      ]
+    },
+    "coursesTeaser": {
+      "title": "Kommende verksteder",
+      "description": "Velg mellom intime temakvelder og fordypende kurs. Vi holder små grupper for å gi rom til alle.",
+      "cta": "Se alle kurs"
+    },
+    "newsletter": {
+      "title": "Hold deg inspirert",
+      "description": "Få invitasjoner til nye kurs, tips om bærekraftig redesign og historier fra atelieret rett i innboksen.",
+      "placeholder": "E-postadresse",
+      "cta": "Abonner"
     }
   },
   "contact": {
@@ -51,6 +119,32 @@
         "description": "Lær å sy tradisjonell bunad-skjorte"
       }
     ]
+  },
+  "servicesPage": {
+    "title": "Våre tjenester",
+    "description": "Vi tilbyr et bredt spekter av tjenester innen design og redesign, skreddersydd for å møte dine behov – fra personlige plagg til inspirerende kurs og temakvelder.",
+    "services": {
+      "sewing": {
+        "title": "Søm og skreddersøm",
+        "longDescription": "Skreddersydde løsninger for alle dine sømbehov – fra reparasjoner og tilpasninger til nysøm av unike plagg. Vi sikrer perfekt passform og varig kvalitet.",
+        "cta": { "text": "Bestill time", "link": "/kontakt" }
+      },
+      "redesign": {
+        "title": "Redesign og gjenbruk",
+        "longDescription": "Gi gamle favoritter nytt liv. Vi forvandler plagg og tekstiler til moderne og personlige uttrykk – med fokus på håndverk og bærekraft.",
+        "cta": { "text": "Se eksempler", "link": "/galleri" }
+      },
+      "courses": {
+        "title": "Kurs og workshops",
+        "longDescription": "Lær nye ferdigheter eller bygg videre på det du kan. Vi tilbyr praktiske kurs i søm, makramé, keramikk og bunadssøm – for alle nivåer.",
+        "cta": { "text": "Se kurskalender", "link": "/kalender" }
+      },
+      "themeEvenings": {
+        "title": "Temakvelder",
+        "longDescription": "Bli med på inspirerende kvelder med fokus på teknikker, materialer og kreative prosesser – i sosial og avslappet atmosfære.",
+        "cta": { "text": "Se arrangementer", "link": "/kalender" }
+      }
+    }
   }
 }
 

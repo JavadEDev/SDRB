@@ -21,12 +21,42 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [categorySelect, setCategorySelect] = React.useState<string>(course.category || "");
+  const [customCategory, setCustomCategory] = React.useState<string>("");
+  const [categories, setCategories] = React.useState<string[]>([]);
+  const loadCategories = React.useCallback(async () => {
+    try {
+      const res = await fetch("/api/courses", { cache: "no-store" });
+      if (!res.ok) return;
+      const json = await res.json();
+      const setUnique = Array.from(
+        new Set(
+          (json.courses || [])
+            .map((c: any) => (c.category || "").toString().trim())
+            .filter((v: string) => v.length > 0)
+        )
+      );
+      setCategories(setUnique);
+    } catch {
+      setCategories([]);
+    }
+  }, []);
+  React.useEffect(() => {
+    if (isOpen) {
+      loadCategories();
+    }
+  }, [isOpen, loadCategories]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const selectedCategory = formData.get("category") as string;
+    const categoryValue =
+      selectedCategory === "__custom"
+        ? (formData.get("category_custom") as string)?.trim() || null
+        : selectedCategory || null;
     const data = {
       title: {
         no: formData.get("title_no") as string,
@@ -39,7 +69,7 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
       },
       price: formData.get("price") ? String(formData.get("price")) : null,
       location: formData.get("location") as string,
-      category: formData.get("category") ? (formData.get("category") as string) : null,
+      category: categoryValue,
       active: formData.get("active") === "on",
     };
 
@@ -151,15 +181,39 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
             <label className="block text-sm font-medium mb-1">Category</label>
             <select
               name="category"
-              defaultValue={course.category || ""}
+              value={categorySelect === "" ? "" : categorySelect}
+              onChange={(e) => {
+                setCategorySelect(e.target.value);
+                if (e.target.value !== "__custom") {
+                  setCustomCategory("");
+                }
+              }}
               className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
             >
               <option value="">Select category</option>
-              <option value="sewing">Sewing</option>
-              <option value="macramé">Macramé</option>
-              <option value="ceramics">Ceramics</option>
-              <option value="bunad-shirt">Bunad Shirt</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value="__custom">+ Add new category…</option>
             </select>
+            {categorySelect === "__custom" && (
+              <div className="mt-2">
+                <label className="block text-sm font-medium mb-1">
+                  New category
+                </label>
+                <input
+                  type="text"
+                  name="category_custom"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                  placeholder="Enter new category name"
+                  className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <input

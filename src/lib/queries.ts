@@ -29,6 +29,8 @@ export async function getCoursesWithSessions(includeInactive: boolean = false) {
       })
       .from(registrations)
       .where(inArray(registrations.sessionId, sessionIds))
+      // only approved registrations affect available seats
+      .where(eq(registrations.approved, true))
       .groupBy(registrations.sessionId);
     registrationCounts = counts;
   }
@@ -100,7 +102,7 @@ export async function createRegistration(data: {
   sessionId: string;
 }) {
   if (!db) throw new Error("Database not initialized");
-  return await db.insert(registrations).values(data).returning();
+  return await db.insert(registrations).values({ ...data, approved: false }).returning();
 }
 
 export async function getUserRegistrations(userId: string) {
@@ -137,6 +139,11 @@ export async function getAllRegistrations() {
     .innerJoin(courseSessions, eq(registrations.sessionId, courseSessions.id))
     .innerJoin(courses, eq(courseSessions.courseId, courses.id))
     .orderBy(desc(registrations.createdAt));
+}
+
+export async function updateRegistrationApproval(id: string, approved: boolean) {
+  if (!db) throw new Error("Database not initialized");
+  return await db.update(registrations).set({ approved }).where(eq(registrations.id, id)).returning();
 }
 
 export async function getSessionRegistrations(sessionId: string) {

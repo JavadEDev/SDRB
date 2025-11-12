@@ -1,11 +1,10 @@
 import { getDictionary } from "@/lib/dictionaries";
-import {
-  getCoursesWithSessions,
-  getUserRegistrations,
-} from "@/lib/queries";
+import { getCoursesWithSessions, getUserRegistrations } from "@/lib/queries";
 import type { Metadata } from "next";
+import { MDiv, MSection } from "@/components/anim/reveal";
 import { RegisterButton } from "@/components/register-button";
 import { getServerSession } from "@/lib/auth";
+import { CalendarGrid } from "@/components/calendar/calendar-grid";
 
 export async function generateMetadata({
   params,
@@ -33,9 +32,7 @@ export default async function CalendarPage({
 
   const userRegistrationMap: Record<string, string> = {};
   if (session?.user?.id) {
-    const registrations = await getUserRegistrations(
-      (session.user as any).id
-    );
+    const registrations = await getUserRegistrations((session.user as any).id);
     registrations.forEach((entry) => {
       if (entry.session?.id) {
         userRegistrationMap[entry.session.id] = entry.registration.id;
@@ -44,54 +41,52 @@ export default async function CalendarPage({
   }
 
   const allSessions = coursesWithSessions.flatMap((course) =>
-    course.sessions.map((session) => ({
-      ...session,
-      course,
+    (course.sessions || []).map((session) => ({
+      id: session.id,
+      startAt: new Date(session.startAt).toISOString(),
+      seats: session.seats,
+      availableSeats: session.availableSeats,
+      location: course.location,
+      courseTitle:
+        (course.title as any)?.[locale] ||
+        (course.title as any)?.no ||
+        (course.title as any)?.en ||
+        "",
+      category: (course.category || "").toString(),
     }))
   );
 
-  allSessions.sort((a, b) => a.startAt.getTime() - b.startAt.getTime());
+  allSessions.sort(
+    (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime()
+  );
 
   return (
-    <div>
-      <h1 className="text-4xl font-bold mb-6">{dict.nav.calendar}</h1>
+    <div className="space-y-10">
+      <MSection
+        className="space-y-4"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.45 }}
+      >
+        <h1>{dict.nav.calendar}</h1>
+        <p className="max-w-3xl text-[var(--muted-text)]">
+          {locale === "no"
+            ? "Planlegg ditt neste kurs og reserver plass i god tid. Vi holder små grupper for å sikre personlig oppfølging."
+            : "Plan your next workshop and reserve your seat early. We keep groups intimate to ensure personal guidance."}
+        </p>
+      </MSection>
       {allSessions.length === 0 ? (
-        <p className="text-lg">{locale === "no" ? "Ingen kommende kurs" : "No upcoming courses"}</p>
-      ) : (
-        <div className="space-y-4">
-          {allSessions.map((session) => {
-            const courseTitle = session.course.title?.[locale] || session.course.title?.no || session.course.title?.en || "";
-            
-            return (
-            <div key={session.id} className="border rounded-lg p-6">
-              <h2 className="text-2xl font-semibold mb-2">{courseTitle}</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">
-                {new Date(session.startAt).toLocaleDateString(locale === "no" ? "nb-NO" : "en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {locale === "no" ? "Steder ledig" : "Seats available"}: {session.availableSeats} / {session.seats}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{session.course.location}</p>
-              <RegisterButton
-                sessionId={session.id}
-                availableSeats={session.availableSeats}
-                isRegistered={Boolean(userRegistrationMap[session.id])}
-                registrationId={userRegistrationMap[session.id]}
-                locale={locale}
-              />
-            </div>
-            );
-          })}
+        <div className="rounded-[calc(var(--radius)*2)] border bg-card p-12 text-center text-sm text-[var(--muted-text)]">
+          {locale === "no" ? "Ingen kommende kurs" : "No upcoming courses"}
         </div>
+      ) : (
+        <CalendarGrid
+          sessions={allSessions}
+          userRegistrationMap={userRegistrationMap}
+          locale={locale}
+        />
       )}
     </div>
   );
 }
-

@@ -14,10 +14,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const SignupSchema = z.object({
-      name: z
+      firstName: z
         .string()
-        .min(2, "Name must be at least 2 characters")
-        .max(100, "Name is too long"),
+        .min(1, "First name is required")
+        .max(100, "First name is too long"),
+      lastName: z
+        .string()
+        .min(1, "Last name is required")
+        .max(100, "Last name is too long"),
       email: z.string().email("Invalid email address"),
       password: z
         .string()
@@ -38,7 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Validation failed", issues }, { status: 422 });
     }
 
-    const { name, email, password } = parsed.data;
+    const { firstName, lastName, email, password } = parsed.data;
 
     const existing = await db
       .select()
@@ -58,7 +62,8 @@ export async function POST(request: NextRequest) {
       .insert(users)
       .values({
         id,
-        name,
+        firstName,
+        lastName,
         email,
         passwordHash,
         role: "user",

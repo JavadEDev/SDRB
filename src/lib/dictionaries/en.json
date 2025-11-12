@@ -14,14 +14,82 @@
   },
   "home": {
     "title": "Welcome to Severinsen Design & Redesign Bedrift",
+    "tagline": "Tailored sewing, redesign, and courses for makers.",
     "owner": "Jorunn",
     "address": "Krossmyrveien 25",
+    "ctaCourses": "Explore courses",
+    "ctaContact": "Book a consultation",
+    "heroStats": [
+      { "value": "20+", "label": "Years of craft experience" },
+      { "value": "500+", "label": "Custom projects delivered" },
+      { "value": "1500+", "label": "Course participants inspired" }
+    ],
+    "story": {
+      "heading": "Craftsmanship with heart and precision",
+      "paragraphs": [
+        "For more than two decades, Severinsen Design & Redesign has helped people fall in love with their wardrobe again. With traditional techniques, mindful materials, and a sharp eye for detail, we create garments and interiors that feel entirely personal.",
+        "Every project begins with listening—to the stories you carry, the fabrics you cherish, and how you wish to feel in the finished piece. From there we design a bespoke plan and invite you into the process."
+      ]
+    },
+    "galleryPreview": {
+      "title": "Featured projects",
+      "description": "A glimpse into redesign, sewing, and artistry from our Stavanger studio.",
+      "cta": "Browse the gallery"
+    },
     "services": {
       "title": "Our Services",
+      "description": "We blend traditional craftsmanship with modern expression to create pieces and experiences that last.",
+      "items": [
+        {
+          "title": "Sewing",
+          "description": "Tailor-made garments, alterations, and special commissions for every occasion."
+        },
+        {
+          "title": "Redesign",
+          "description": "Give beloved garments a new life with creative redesign processes and sustainable materials."
+        },
+        {
+          "title": "Courses",
+          "description": "Hands-on workshops in sewing, macramé, ceramics, and bunad craftsmanship for all levels."
+        },
+        {
+          "title": "Theme Evenings",
+          "description": "Intimate evenings focused on techniques, materials, and bespoke projects."
+        }
+      ],
       "sewing": "Sewing",
       "redesign": "Redesign",
       "courses": "Courses",
       "themeEvenings": "Theme Evenings"
+    },
+    "process": {
+      "title": "How we work",
+      "subtitle": "From idea to finished piece",
+      "steps": [
+        {
+          "title": "Discover & plan",
+          "description": "We begin with a conversation about needs, inspiration, and function before outlining the best direction."
+        },
+        {
+          "title": "Develop & shape",
+          "description": "Materials are selected, patterns drafted, and details refined in close collaboration with you."
+        },
+        {
+          "title": "Finish & deliver",
+          "description": "Once everything is perfect, we deliver the final piece with clear guidance on care and future use."
+        }
+      ]
+    },
+    "coursesTeaser": {
+      "title": "Upcoming workshops",
+      "description": "Choose from intimate evening sessions and in-depth courses. We keep groups small to give everyone space.",
+      "cta": "View all courses"
+    },
+    "newsletter": {
+      "title": "Stay inspired",
+      "description": "Receive invitations to new courses, sustainable redesign tips, and stories from the studio.",
+      "placeholder": "Email address",
+      "cta": "Subscribe"
     }
   },
   "contact": {
@@ -51,6 +119,32 @@
         "description": "Learn to sew traditional bunad shirt"
       }
     ]
+  },
+  "servicesPage": {
+    "title": "Our Services",
+    "description": "We offer a wide range of design and redesign services tailored to your needs—from bespoke garments to inspiring courses and themed events.",
+    "services": {
+      "sewing": {
+        "title": "Sewing & Tailoring",
+        "longDescription": "Tailor-made solutions for your sewing needs—from alterations and repairs to new, one-of-a-kind garments. We ensure perfect fit and lasting quality.",
+        "cta": { "text": "Book an appointment", "link": "/kontakt" }
+      },
+      "redesign": {
+        "title": "Redesign & Upcycling",
+        "longDescription": "Give your favorite pieces a new life. We transform garments and textiles into modern, personal expressions—crafted with care and sustainability in mind.",
+        "cta": { "text": "See examples", "link": "/galleri" }
+      },
+      "courses": {
+        "title": "Courses & Workshops",
+        "longDescription": "Learn new skills or deepen existing ones. We offer practical workshops in sewing, macramé, ceramics, and bunad craftsmanship—for all levels.",
+        "cta": { "text": "View course calendar", "link": "/kalender" }
+      },
+      "themeEvenings": {
+        "title": "Theme Evenings",
+        "longDescription": "Join inspiring evenings focused on techniques, materials, and creative processes—in a social and relaxed atmosphere.",
+        "cta": { "text": "View events", "link": "/kalender" }
+      }
+    }
   }
 }
 

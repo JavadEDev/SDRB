@@ -1,5 +1,8 @@
 import { getDictionary } from "@/lib/dictionaries";
 import { getCoursesWithSessions } from "@/lib/queries";
+import { Button } from "@/components/ui/button";
+import { MDiv, MSection } from "@/components/anim/reveal";
+import { CourseGrid } from "@/components/courses/course-grid";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +30,17 @@ export default async function CoursesPage({
   const { locale } = await params;
   const dict = await getDictionary(locale);
   const courses = await getCoursesWithSessions();
+  const makeLabel = (key: string) => {
+    const words = key.replace(/[-_]/g, " ").split(" ").filter(Boolean);
+    return words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  };
+  const categoriesFromDb = Array.from(
+    new Set(
+      courses
+        .map((c: any) => (c.category || "").toLowerCase())
+        .filter((v: string) => v && v.trim().length > 0)
+    )
+  ).map((key: string) => ({ key, label: makeLabel(key) }));
   const noCoursesText =
     locale === "no"
       ? "Ingen kurs tilgjengelig akkurat nå."
@@ -45,56 +59,64 @@ export default async function CoursesPage({
   });
 
   return (
-    <div>
-      <h1 className="text-4xl font-bold mb-6">{dict.coursesPage.title}</h1>
-      <p className="text-lg mb-8">{dict.coursesPage.description}</p>
-      {courses.length === 0 ? (
-        <p className="text-gray-600 dark:text-gray-400">{noCoursesText}</p>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {courses.map((course) => {
-            const title =
-              (course.title as any)?.[locale] ||
-              (course.title as any)?.no ||
-              (course.title as any)?.en ||
-              "";
-            const description =
-              (course.description as any)?.[locale] ||
-              (course.description as any)?.no ||
-              (course.description as any)?.en ||
-              "";
-            return (
-              <div key={course.id} className="border rounded-lg p-6">
-                <h2 className="text-2xl font-semibold mb-2">{title}</h2>
-                {description && <p className="mb-3">{description}</p>}
-                {course.price && (
-                  <p className="font-medium">{course.price} kr</p>
-                )}
-                <div className="mt-4 space-y-2">
-                  <p className="font-semibold">{upcomingSessionsText}</p>
-                  {Array.isArray(course.sessions) &&
-                  course.sessions.length > 0 ? (
-                    <ul className="space-y-1">
-                      {course.sessions.map((s: any) => (
-                        <li
-                          key={s.id}
-                          className="text-sm text-gray-700 dark:text-gray-300"
-                        >
-                          {sessionFormatter.format(new Date(s.startAt))} ·{" "}
-                          {seatsText}: {s.availableSeats}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {noSessionsText}
-                    </p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+    <div className="space-y-16">
+      <MSection
+        className="space-y-6"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.45 }}
+      >
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1>{dict.coursesPage.title}</h1>
+            <p className="mt-4 max-w-3xl text-[var(--muted-text)]">
+              {dict.coursesPage.description}
+            </p>
+          </div>
+          <Button asChild variant="secondary">
+            <a href={`/${locale}/kalender`}>
+              {locale === "no" ? "Åpne kalender" : "Open calendar"}
+            </a>
+          </Button>
         </div>
+        {Array.isArray(dict.coursesPage.sections) && (
+          <div className="grid gap-4 rounded-[calc(var(--radius)*3)] border bg-card p-6 shadow-sm md:grid-cols-2 lg:grid-cols-4">
+            {dict.coursesPage.sections.map((section: any) => (
+              <div
+                key={section.title}
+                className="rounded-[calc(var(--radius)*2)] bg-[var(--muted-bg)]/40 p-5"
+              >
+                <h2 className="font-serif text-xl">{section.title}</h2>
+                <p className="mt-2 text-sm text-[var(--muted-text)]">
+                  {section.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </MSection>
+
+      {courses.length === 0 ? (
+        <div className="rounded-[calc(var(--radius)*2)] border bg-card p-12 text-center text-sm text-[var(--muted-text)]">
+          {noCoursesText}
+        </div>
+      ) : (
+        <CourseGrid
+          courses={courses as any}
+          locale={locale}
+          labels={{
+            upcomingSessions: upcomingSessionsText,
+            seats: seatsText,
+            noSessions: noSessionsText,
+            browseCta:
+              locale === "no" ? "Planlegg deltakelse" : "Plan your spot",
+            categoriesTitle: locale === "no" ? "Kategori" : "Category",
+            categories: categoriesFromDb,
+            allLabel: locale === "no" ? "Alle" : "All",
+            calendarPath: `/${locale}/kalender`,
+          }}
+        />
       )}
     </div>
   );

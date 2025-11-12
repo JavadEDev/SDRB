@@ -27,7 +27,11 @@ export function RegisterButton({
   const [isCancelling, setIsCancelling] = React.useState(false);
 
   if (status === "loading") {
-    return <Button variant="secondary" disabled>Loading...</Button>;
+    return (
+      <Button variant="secondary" disabled>
+        Loading...
+      </Button>
+    );
   }
 
   if (!session) {
@@ -36,11 +40,15 @@ export function RegisterButton({
         variant="primary"
         onClick={() =>
           router.push(
-            `/signin?callbackUrl=${encodeURIComponent(window.location.pathname)}`
+            `/signin?callbackUrl=${encodeURIComponent(
+              window.location.pathname
+            )}`
           )
         }
       >
-        {locale === "no" ? "Logg inn for å melde deg på" : "Sign in to register"}
+        {locale === "no"
+          ? "Logg inn for å melde deg på"
+          : "Sign in to register"}
       </Button>
     );
   }
@@ -63,15 +71,22 @@ export function RegisterButton({
       });
 
       if (response.ok) {
-        notify.success(locale === "no" ? "Påmelding vellykket!" : "Successfully registered!");
+        notify.success(
+          locale === "no" ? "Påmelding vellykket!" : "Successfully registered!"
+        );
         router.refresh();
       } else {
         const error = await response.json();
-        notify.error(error.error || (locale === "no" ? "Kunne ikke registrere" : "Failed to register"));
+        notify.error(
+          error.error ||
+            (locale === "no" ? "Kunne ikke registrere" : "Failed to register")
+        );
       }
     } catch (error) {
       console.error("Error registering:", error);
-      notify.error(locale === "no" ? "Kunne ikke registrere" : "Failed to register");
+      notify.error(
+        locale === "no" ? "Kunne ikke registrere" : "Failed to register"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -86,11 +101,16 @@ export function RegisterButton({
       });
 
       if (response.ok) {
-        notify.success(locale === "no" ? "Avmelding gjennomført!" : "Registration cancelled!");
+        notify.success(
+          locale === "no" ? "Avmelding gjennomført!" : "Registration cancelled!"
+        );
         router.refresh();
       } else {
         const error = await response.json();
-        notify.error(error.error || (locale === "no" ? "Kunne ikke avmelde" : "Failed to cancel"));
+        notify.error(
+          error.error ||
+            (locale === "no" ? "Kunne ikke avmelde" : "Failed to cancel")
+        );
       }
     } catch (error) {
       console.error("Error cancelling registration:", error);
@@ -112,8 +132,8 @@ export function RegisterButton({
             ? "Avmelder..."
             : "Cancelling..."
           : locale === "no"
-            ? "Avmeld"
-            : "Cancel"}
+          ? "Avmeld"
+          : "Cancel"}
       </Button>
     );
   }
@@ -125,9 +145,8 @@ export function RegisterButton({
           ? "Registrerer..."
           : "Registering..."
         : locale === "no"
-          ? "Meld deg på"
-          : "Register"}
+        ? "Meld deg på"
+        : "Register"}
     </Button>
   );
 }
-

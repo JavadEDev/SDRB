@@ -52,15 +52,16 @@ export async function POST(
       );
     }
 
-    // Check capacity
-    if (existingRegistrations.length >= courseSession[0].seats) {
+    // Check capacity (only approved registrations count towards capacity)
+    const approvedCount = existingRegistrations.filter((r: any) => r.approved === true).length;
+    if (approvedCount >= courseSession[0].seats) {
       return NextResponse.json(
         { error: "Session is full" },
         { status: 409 }
       );
     }
 
-    // Create registration
+    // Create registration (pending approval)
     const registration = await createRegistration({
       userId: (authSession.user as any)?.id,
       sessionId: id,

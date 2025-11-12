@@ -1,23 +1,30 @@
 import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger";
+  size?: "sm" | "md" | "lg";
+  asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", asChild = false, ...props }, ref) => {
+    const Comp: any = asChild ? Slot : "button";
     return (
-      <button
+      <Comp
         className={cn(
-          "px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
+          "inline-flex items-center justify-center rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm",
           {
-            "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500":
+            "px-6 py-3": size === "md",
+            "px-4 py-2 text-sm": size === "sm",
+            "px-8 py-4 text-lg": size === "lg",
+            "bg-primary text-primary-foreground hover:opacity-90 focus:ring-[var(--action-primary-bg)]":
               variant === "primary",
-            "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600":
+            "bg-secondary text-secondary-foreground hover:opacity-90 focus:ring-[var(--action-secondary-bg)]":
               variant === "secondary",
-            "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500":
+            "bg-destructive text-destructive-foreground hover:opacity-90 focus:ring-[var(--action-destructive-bg)]":
               variant === "danger",
           },
           className

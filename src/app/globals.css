@@ -3,26 +3,173 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Base */
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --muted-bg: #e7e5e4;
+  --muted-text: #5e5955;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, serif;
+  --font-mono: "Menlo", ui-monospace, SFMono-Regular, monospace;
+
+  /* Actions */
+  --action-primary-bg: #533d2d;
+  --action-primary-text: #fbfaf8;
+  --action-secondary-bg: #ebebeb;
+  --action-secondary-text: #1a1a1a;
+  --action-accent-bg: #e3e0dd;
+  --action-accent-text: #2a2622;
+  --action-destructive-bg: #8c1717;
+  --action-destructive-text: #fef6f6;
+
+  /* Forms */
+  --input-bg: #ffffff;
+  --input-border: #e6e6e6;
+  --input-focus-border: #533d2d;
+
+  /* Containers */
+  --card-bg: #fafafa;
+  --card-text: #1a1a1a;
+  --popover-bg: #f2f2f2;
+  --popover-text: #1a1a1a;
+
+  /* Charts */
+  --chart-1: #533d2d;
+  --chart-2: #1b767e;
+  --chart-3: #59257e;
+  --chart-4: #a16512;
+  --chart-5: #1d7240;
+
+  /* Shape */
+  --radius: 0.5rem;
+
+  /* Tailwind design tokens (light) - HSL channel values */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 98%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 95%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 28 30% 25%;
+  --primary-foreground: 30 60% 98%;
+  --secondary: 0 0% 92%;
+  --secondary-foreground: 0 0% 10%;
+  --muted: 30 10% 90%;
+  --muted-foreground: 24 6% 35%;
+  --accent: 30 8% 88%;
+  --accent-foreground: 22 10% 15%;
+  --destructive: 0 74% 32%;
+  --destructive-foreground: 0 60% 97%;
+  --border: 0 0% 90%;
+  --input: 0 0% 100%;
+  --ring: 28 30% 25%;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Base theming */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply border-border;
+  }
+  html,
+  body {
+    @apply bg-[var(--bg)] text-[var(--text)] font-sans min-h-screen antialiased;
+  }
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --tw-ring-color: var(--action-primary-bg);
+    --tw-border-opacity: 1;
+  }
+  h1 {
+    @apply font-serif text-4xl md:text-6xl lg:text-7xl font-normal tracking-tight;
+  }
+  h2 {
+    @apply font-serif text-3xl md:text-5xl font-normal tracking-tight;
+  }
+  h3 {
+    @apply font-sans text-xl md:text-2xl font-medium tracking-tight;
+  }
+  h4 {
+    @apply font-sans text-lg md:text-xl font-semibold;
+  }
+  p,
+  li {
+    @apply font-sans text-base md:text-lg leading-relaxed text-[var(--text)];
+  }
+  a {
+    @apply transition-colors;
+  }
+  main {
+    @apply bg-[var(--bg)];
+  }
+  code,
+  pre {
+    font-family: var(--font-mono);
+  }
+  ::selection {
+    background: var(--action-primary-bg);
+    color: var(--action-primary-text);
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+/* Dark mode tokens and variables */
+.dark {
+  /* Custom variables used across components */
+  --bg: #0f0f0f;
+  --text: #f2f2f2;
+  --muted-bg: #2a2a2a;
+  --muted-text: #b3b3b3;
+
+  --action-primary-bg: #a47d62;
+  --action-primary-text: #0f0f0f;
+  --action-secondary-bg: #222222;
+  --action-secondary-text: #f2f2f2;
+  --action-accent-bg: #3a332e;
+  --action-accent-text: #f0eae6;
+  --action-destructive-bg: #b33939;
+  --action-destructive-text: #fff9f9;
+
+  --input-bg: #1a1a1a;
+  --input-border: #333333;
+  --input-focus-border: #a47d62;
+
+  --card-bg: #141414;
+  --card-text: #f2f2f2;
+  --popover-bg: #171717;
+  --popover-text: #f2f2f2;
+
+  /* Tailwind design tokens (dark) - HSL channel values */
+  --background: 0 0% 6%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 12%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 28 30% 60%;
+  --primary-foreground: 30 60% 98%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 95%;
+  --muted: 30 6% 20%;
+  --muted-foreground: 24 6% 70%;
+  --accent: 30 8% 22%;
+  --accent-foreground: 24 20% 90%;
+  --destructive: 0 60% 40%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 20%;
+  --input: 0 0% 12%;
+  --ring: 28 30% 60%;
 }
 
+/* Forms baseline */
+@layer components {
+  input,
+  textarea,
+  select {
+    @apply bg-[var(--input-bg)] border border-[var(--input-border)] rounded outline-none;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply ring-2 ring-offset-2 ring-[var(--input-focus-border)] border-[var(--input-focus-border)];
+  }
+}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest } from "@/lib/auth";
-import { deleteRegistration } from "@/lib/queries";
+import { deleteRegistration, updateRegistrationApproval } from "@/lib/queries";
 import { db } from "@/lib/db";
 import { registrations } from "../../../../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -47,6 +47,41 @@ export async function DELETE(
     return NextResponse.json({ message: "Registration deleted successfully" });
   } catch (error) {
     console.error("Error deleting registration:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const session = await getSessionFromRequest(request);
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if ((session.user as any)?.role !== "admin") {
+      return NextResponse.json(
+        { error: "Forbidden: Admin access required" },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json().catch(() => ({}));
+    const approved = body.approved === false ? false : true;
+
+    const updated = await updateRegistrationApproval(id, approved);
+    if (!updated || updated.length === 0) {
+      return NextResponse.json({ error: "Registration not found" }, { status: 404 });
+    }
+    return NextResponse.json(updated[0], { status: 200 });
+  } catch (error) {
+    console.error("Error updating registration:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
