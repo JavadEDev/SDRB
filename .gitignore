@@ -35,4 +35,5 @@ next-env.d.ts
 
 # drizzle
 drizzle/
+!src/drizzle/
 
