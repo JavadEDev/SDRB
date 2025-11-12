@@ -28,9 +28,12 @@ export async function getCoursesWithSessions(includeInactive: boolean = false) {
         count: sql<number>`count(*)::int`,
       })
       .from(registrations)
-      .where(inArray(registrations.sessionId, sessionIds))
-      // only approved registrations affect available seats
-      .where(eq(registrations.approved, true))
+      .where(
+        and(
+          inArray(registrations.sessionId, sessionIds),
+          eq(registrations.approved, true)
+        )
+      )
       .groupBy(registrations.sessionId);
     registrationCounts = counts;
   }

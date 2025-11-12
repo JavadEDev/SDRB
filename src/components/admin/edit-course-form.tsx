@@ -30,7 +30,7 @@ export function EditCourseForm({ course }: EditCourseFormProps) {
       if (!res.ok) return;
       const json = await res.json();
       const setUnique = Array.from(
-        new Set(
+        new Set<string>(
           (json.courses || [])
             .map((c: any) => (c.category || "").toString().trim())
             .filter((v: string) => v.length > 0)
